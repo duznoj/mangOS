@@ -23,6 +23,8 @@ typedef struct {
 	uint16_t bootSignature;
 } __attribute__((packed)) MBR;
 
+
+
 // -----------------------------------------------------
 
 
@@ -51,7 +53,8 @@ uint64_t image_lbas = 0;
 
 bool write_mbr(FILE *image_file)
 {
-	if(image_size > 0xFFFFFFFF) image_lbas = 0x100000000;
+	uint64_t mbr_image_lbas = image_lbas;
+	if(mbr_image_lbas > 0xFFFFFFFF) mbr_image_lbas = 0x100000000;
 	MBR mbr = {
 		.bootCode = {0},
 		.MBR_Signature = 0,
@@ -62,7 +65,7 @@ bool write_mbr(FILE *image_file)
 			.OS_type = 0xEE,
 			.endingCHS = {0xFF, 0xFF, 0xFF},
 			.startingLBA = 0x00000001,
-			.size_in_LBAs = image_lbas - 1
+			.size_in_LBAs = mbr_image_lbas - 1
 		},
 		.bootSignature = 0xAA55,
 	};
